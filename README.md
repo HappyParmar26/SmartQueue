@@ -18,11 +18,11 @@ Citizens book a digital token from home, track their position live, and walk in 
 
 | User | What they get |
 |------|--------------|
-| 👨‍👩‍👧 Citizens | Book tokens, track queue live, get notified before their turn |
-| 👴 Senior Citizens | Priority access, no standing in line |
-| ♿ Persons with Disability | Front-of-queue handling, assisted mode |
-| 🏛️ Government Staff | Manage counters, call tokens, handle walk-ins |
-| 📊 Office Administrators | Analytics, AI crowd alerts, staffing recommendations |
+| Citizens | Book tokens, track queue live, get notified before their turn |
+| Senior Citizens | Priority access, no standing in line |
+| Persons with Disability | Front-of-queue handling, assisted mode |
+| Government Staff | Manage counters, call tokens, handle walk-ins |
+| Office Administrators | Analytics, AI crowd alerts, staffing recommendations |
 
 ---
 
@@ -36,7 +36,7 @@ Citizens book a digital token from home, track their position live, and walk in 
 - **Priority Handling** — Senior citizens and disabled persons served first
 - **Public Display Screen** — Large-format token board for office waiting rooms
 - **Self-Learning AI** — Model improves automatically every day from real data
-- **Multi-language Support** — Hindi, Gujarati, Tamil, Telugu and more
+- **Multi-language Support** — Hindi, Gujarati, English
 
 ---
 

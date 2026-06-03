@@ -13,12 +13,14 @@ const StaffSchema = new Schema(
             match: [/^EMP\d{3,}$/, "emp_id must follow format EMP001"],
         },
         name: { type: String, required: true, trim: true },
+
         phone: {
             type: String,
             required: true,
             unique: true,
             match: [/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"],
         },
+
         email: {
             type: String,
             required: true,
@@ -27,8 +29,9 @@ const StaffSchema = new Schema(
             trim: true,
             match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Enter a valid email address"],
         },
+
         office_id: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             ref: "Office",
             required: true,
         },

@@ -3,9 +3,9 @@ const mongoose = require("mongoose");
 const serviceSchema = new mongoose.Schema(
     {
         office_id: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Office",
             required: true,
-            trim: true,
             index: true,
         },
 

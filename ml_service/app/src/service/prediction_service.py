@@ -26,7 +26,6 @@ def get_hour_prediction(model_input):
     }
 
 
-
 def predict_crowd(X, x_dict):
 
     xgb_pred = XGB_crowd_model.predict(X)[0]

@@ -72,52 +72,53 @@ console.log(json);
    - Query params: `office_id`, `office_type`, `department`, `city`, `date` (YYYY-MM-DD), `open_hour`, `close_hour`
    - Response: `DayForecastOut` object with `hourly` list and `best_hour` (recommended least-crowded hour)
 
-3) POST /observe
-   - Purpose: send a real-world observation (used for online learning)
-   - Body JSON (ObserveIn):
+3) GET /predict/week
+   - Purpose: weekly forecast for the selected office
+   - What it does:
+     - returns predictions for 7 days
+     - helps the Node backend show a weekly crowd plan
+     - gives the best day or best time slot if the model supports it
+   - Query params:
      - `office_id` (string)
      - `office_type` (string)
      - `department` (string)
      - `city` (string)
-     - `datetime` (ISO `YYYY-MM-DDTHH:MM`)
+     - `week_start` (YYYY-MM-DD)
      - `open_hour` (int)
      - `close_hour` (int)
-     - `crowd_level` (float 0-100)
-     - `tokens_issued` (float)
-     - `wait_time_minutes` (float)
-   - Behavior: server queues learning in background; returns `accepted` status.
+   - Response structure:
+     - `office_id` (string)
+     - `department` (string)
+     - `city` (string)
+     - `week_start` (string)
+     - `week_end` (string)
+     - `days` (array of daily forecast objects)
 
-   Example request (Node.js):
-
-```js
-await fetch('http://localhost:8000/observe', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    office_id: 'RTO_Ahmedabad_Central',
-    office_type: 'RTO',
-    department: 'Driving_Licence',
-    city: 'Ahmedabad',
-    datetime: '2024-10-14T10:00',
-    open_hour: 9,
-    close_hour: 18,
-    crowd_level: 62.5,
-    tokens_issued: 25,
-    wait_time_minutes: 12.0
-  })
-});
-```
-
-   Example response (accepted):
+   Example response:
 
 ```json
 {
-  "status": "accepted",
   "office_id": "RTO_Ahmedabad_Central",
-  "dept": "Driving_Licence",
+  "department": "Driving_Licence",
   "city": "Ahmedabad",
-  "datetime": "2024-10-14T10:00:00",
-  "message": "Observation queued. River model updating instantly."
+  "week_start": "2024-10-14",
+  "week_end": "2024-10-20",
+  "days": [
+    {
+      "date": "2024-10-14",
+      "is_holiday": false,
+      "best_hour": 11,
+      "best_time": "11:00",
+      "best_crowd": 12.3
+    },
+    {
+      "date": "2024-10-15",
+      "is_holiday": false,
+      "best_hour": 10,
+      "best_time": "10:00",
+      "best_crowd": 15.8
+    }
+  ]
 }
 ```
 

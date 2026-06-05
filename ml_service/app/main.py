@@ -1,7 +1,39 @@
+import datetime
+
+from app.src.routes import prediction_route
+from app.src.service.model_feature_gen_helper import HOLIDAYS
 from fastapi import FastAPI
+import uvicorn
+from app.src.routes.prediction_route import prediction_router
+from app.src.routes.holiday_route import holiday_router
 
 app = FastAPI()
 
 @app.get("/")
 def root():
-    return { "success": True, "message": "ML Service health Check" }
+    return { "success": True, "message": "ML Service" }
+
+@app.get("/health", tags=["System"])
+async def health():
+    return {
+        "status":         "ok",
+        "timestamp":      datetime.now().isoformat(),
+        "model":          "XGBoost+LightGBM+Ridge+River",
+        "version":        "2.0.0",
+    }
+
+
+app.include_router(
+    prediction_router,
+    prefix="/api/v1",
+    tags=["Prediction"]
+)
+
+app.include_router(
+    holiday_router,
+    prefix="/api/v1",
+    tags=["Holiday"]
+)
+
+if __name__ == "__main__":
+    uvicorn.run("main.app", host="0.0.0.0", port=8000 , reload=True)

@@ -10,3 +10,5 @@ class PredictionRequest(BaseModel):
     open_hour: int
     close_hour: int
 
+class HolidayReloadRequest(BaseModel):
+    dates: list[str]

@@ -1,3 +1,8 @@
+import datetime
+
+from scipy import stats
+
+from SmartQueue.ml_service.app.src.service.model_feature_gen_helper import HOLIDAYS
 from fastapi import FastAPI
 import uvicorn
 from routes import prediction_route
@@ -6,7 +11,17 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return { "success": True, "message": "ML Service health Check" }
+    return { "success": True, "message": "ML Service" }
+
+@app.get("/health", tags=["System"])
+async def health():
+    return {
+        "status":         "ok",
+        "timestamp":      datetime.now().isoformat(),
+        "model":          "XGBoost+LightGBM+Ridge+River",
+        "version":        "2.0.0",
+    }
+
 
 app.include_router(
     prediction_route.prediction_router,

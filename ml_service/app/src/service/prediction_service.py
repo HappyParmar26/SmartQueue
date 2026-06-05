@@ -1,9 +1,10 @@
-from temp.model_loader import (
-    XGB_crowd_model, LGB_crowd_model, river_crowdmodel, meta_crowd_model,
-    XGB_token_issued_model, LGB_token_issued_model, river_token_issuedmodel, meta_token_issued_model,
+from app.src.temp.model_loader import (
+    XGB_crowd_model, LGB_crowd_model, river_crowd_model, meta_crowd_model,
+    XGB_token_issued_model, LGB_token_issued_model, river_token_issued_model, meta_token_issued_model,
     XGB_wait_time_model, LGB_wait_time_model, river_wait_time_model, meta_wait_time_model,
 )
-from util.helper import get_rush_label
+from app.src.util.helper import get_rush_label
+from app.src.service.generate_model_input import generate_Model_input
 
 
 ALPHA = 0.75
@@ -34,7 +35,7 @@ def predict_crowd(X, x_dict):
         [[xgb_pred, lgb_pred]]
     )[0]
 
-    river_pred = river_crowdmodel.predict_one(x_dict)
+    river_pred = river_crowd_model.predict_one(x_dict)
 
     if river_pred is None:
         river_pred = base_pred
@@ -60,7 +61,7 @@ def predict_tokens(X, x_dict):
         [[xgb_pred, lgb_pred]]
     )[0]
 
-    river_pred = river_token_issuedmodel.predict_one(x_dict)
+    river_pred = river_token_issued_model.predict_one(x_dict)
 
     if river_pred is None:
         river_pred = base_pred

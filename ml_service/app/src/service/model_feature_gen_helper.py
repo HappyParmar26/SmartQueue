@@ -1,7 +1,7 @@
 import numpy as np
 from datetime import timedelta
-from temp.model_loader import city_encoder, type_encoder, department_encoder
-from util.helper import is_election_period, is_navratri
+from app.src.temp.model_loader import city_encoder, type_encoder, department_encoder
+from app.src.util.helper import is_election_period, is_navratri
 
 HOLIDAYS = set()  # loaded from Node.js
 

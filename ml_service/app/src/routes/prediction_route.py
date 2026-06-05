@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from schemas.req_schema import PredictionRequest
-from controller import prediction_controller
-from schemas.res_schema import DayPredictionResponse, PredictionResponse , WeekPredictionResponse
+from app.src.schemas.req_schema import PredictionRequest
+from app.src.controller import prediction_controller
+from app.src.schemas.res_schema import DayPredictionResponse, PredictionResponse , WeekPredictionResponse
 
 prediction_router = APIRouter()
 

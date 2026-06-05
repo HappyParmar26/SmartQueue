@@ -1,11 +1,11 @@
 import datetime
 
-from scipy import stats
-
-from SmartQueue.ml_service.app.src.service.model_feature_gen_helper import HOLIDAYS
+from app.src.routes import prediction_route
+from app.src.service.model_feature_gen_helper import HOLIDAYS
 from fastapi import FastAPI
 import uvicorn
-from routes import prediction_route
+from app.src.routes.prediction_route import prediction_router
+from app.src.routes.holiday_route import holiday_router
 
 app = FastAPI()
 
@@ -24,9 +24,15 @@ async def health():
 
 
 app.include_router(
-    prediction_route.prediction_router,
+    prediction_router,
     prefix="/api/v1",
     tags=["Prediction"]
+)
+
+app.include_router(
+    holiday_router,
+    prefix="/api/v1",
+    tags=["Holiday"]
 )
 
 if __name__ == "__main__":

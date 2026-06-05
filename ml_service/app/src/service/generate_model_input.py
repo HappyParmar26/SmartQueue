@@ -1,14 +1,14 @@
 import pandas as pd
 
-from SmartQueue.ml_service.app.src.config.feature_config import FEATURE_COLS
-from .model_feature_gen_helper import (
+from app.src.config.feature_config import FEATURE_COLS
+from app.src.service.model_feature_gen_helper import (
     add_calendar_features, 
     add_fy_pressure,
     add_lag_features, 
     cyclic_encoding, 
     encode_features,
     get_raw_time , 
-    add_season_features,
+    add_season_feature,
     add_interaction_features
 )
 
@@ -30,7 +30,7 @@ def generate_Model_input( request ):
     df = add_calendar_features(df)
     df = add_fy_pressure(df)    
     df = encode_features(df)
-    df = add_season_features(df)
+    df = add_season_feature(df)
     df = add_interaction_features(df)
     df = add_lag_features(df)
 

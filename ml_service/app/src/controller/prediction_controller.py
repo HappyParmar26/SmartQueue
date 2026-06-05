@@ -1,13 +1,14 @@
 from copy import deepcopy
 from datetime import timedelta
-from SmartQueue.ml_service.app.src.service.model_feature_gen_helper import HOLIDAYS
-from SmartQueue.ml_service.app.src.service.prediction_service import get_hour_prediction
+from app.src.service.model_feature_gen_helper import HOLIDAYS
+from app.src.service.prediction_service import get_hour_prediction
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import pandas as pd
 from datetime import datetime
-from schemas.res_schema import HourlyPrediction, PredictionResponse , DayPredictionResponse , WeekPredictionResponse
-from services.prediction_service import generate_Model_input, get_Predicton
+from app.src.schemas.res_schema import HourlyPrediction, PredictionResponse , DayPredictionResponse , WeekPredictionResponse
+from app.src.schemas.req_schema import PredictionRequest
+from app.src.service.prediction_service import generate_Model_input, get_hour_prediction
 
 
 async def predict( request ) -> PredictionResponse:
@@ -105,7 +106,7 @@ def get_day_prediction(request) -> DayPredictionResponse:
 def get_week_prediction(request):
 
     try :
-        
+
         daily_predictions = []
 
         for day_offset in range(7):

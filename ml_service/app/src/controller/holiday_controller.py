@@ -1,6 +1,6 @@
-from SmartQueue.ml_service.app.src.service.model_feature_gen_helper import HOLIDAYS
+from app.src.service.model_feature_gen_helper import HOLIDAYS
 from fastapi.responses import JSONResponse
-from schemas.req_schema import HolidayReloadRequest
+from app.src.schemas.req_schema import HolidayReloadRequest
 
 
 def reload_holidays_handler( body: HolidayReloadRequest ) :

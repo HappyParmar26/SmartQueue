@@ -1,7 +1,7 @@
-from service.model_feature_gen_helper import HOLIDAYS
+from app.src.service.model_feature_gen_helper import HOLIDAYS
 from fastapi import APIRouter
-from schemas.req_schema import HolidayReloadRequest
-from controller.holiday_controller import reload_holidays_handler
+from app.src.schemas.req_schema import HolidayReloadRequest
+from app.src.controller.holiday_controller import reload_holidays_handler
 
 holiday_router = APIRouter()
 

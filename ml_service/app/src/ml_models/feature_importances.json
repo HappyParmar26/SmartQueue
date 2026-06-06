@@ -1,0 +1,44 @@
+{
+  "crowd_level": {
+    "crowd_lag_7d": 2148.1720343083143,
+    "crowd_same_hour_last_month": 2031.1313088983297,
+    "crowd_roll_mean_8w": 1648.076831921935,
+    "crowd_lag_14d": 1543.034960117191,
+    "crowd_roll_std_4w": 1401.015631845221,
+    "day": 1313.007370378822,
+    "crowd_roll_mean_4w": 1310.0126321362332,
+    "department_enc": 1309.0017751655541,
+    "dept_x_dow": 1222.0016705176095,
+    "office_type_enc": 1112.001947838813,
+    "crowd_lag_1d": 978.0066365166567,
+    "day_sin": 817.0055454396643
+  },
+  "tokens_issued": {
+    "department_enc": 3316.0407084412873,
+    "crowd_same_hour_last_month": 1852.129036411643,
+    "office_type_enc": 1837.0467893406749,
+    "crowd_lag_7d": 1752.1061003059149,
+    "crowd_roll_mean_8w": 1488.0252008941025,
+    "crowd_lag_14d": 1296.0544014945626,
+    "crowd_roll_mean_4w": 1065.013495839201,
+    "crowd_roll_std_4w": 1059.0280108619481,
+    "day": 1053.0068423878402,
+    "dept_x_hour": 1017.0056362361647,
+    "dept_x_dow": 966.0025344549213,
+    "month_end_x_dept": 914.052696980536
+  },
+  "wait_time_minutes": {
+    "department_enc": 4972.131461918354,
+    "office_type_enc": 2433.1555673778057,
+    "crowd_lag_7d": 1795.0600766316056,
+    "dept_x_hour": 1728.0296372342855,
+    "crowd_same_hour_last_month": 1296.0578655861318,
+    "crowd_roll_mean_8w": 1160.0322018228471,
+    "dept_x_dow": 1074.0122663667426,
+    "crowd_lag_14d": 1060.025001872331,
+    "crowd_roll_std_4w": 945.0058258557692,
+    "hour": 937.0285105686635,
+    "crowd_roll_mean_4w": 833.0049531431869,
+    "day": 564.0060421964154
+  }
+}

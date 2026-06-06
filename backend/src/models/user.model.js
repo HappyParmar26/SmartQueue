@@ -20,7 +20,23 @@ const userSchema = new mongoose.Schema(
             trim: true,
             lowercase: true,
         },
+        
+        role: {
+            type: String,
+            enum: ["user", "admin"],
+            default: "user",
+            required: true,
+        },
 
+        // Required only for admins
+        office_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Office",
+            required: function () {
+                return this.role === "admin";
+            },
+        },
+        
         dob: {
             type: Date,
         },

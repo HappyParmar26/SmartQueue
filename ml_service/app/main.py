@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from app.src.routes import prediction_route
 from app.src.service.model_feature_gen_helper import HOLIDAYS

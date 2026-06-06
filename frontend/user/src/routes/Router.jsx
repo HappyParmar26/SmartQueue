@@ -12,6 +12,7 @@ import Layout from '../Layout.jsx'
 import Login from '../components/auth/Login.jsx'
 import {
   Home,
+  BookToken
 } from '../pages'
 
 export const router = createBrowserRouter(
@@ -19,6 +20,7 @@ export const router = createBrowserRouter(
     <Route path='/' element={<Layout />} >
 
       <Route path='/' element={<Home />} />
+      <Route path='/book-token' element={<BookToken />} />
       <Route path='/app' element={<App />} />
 
 

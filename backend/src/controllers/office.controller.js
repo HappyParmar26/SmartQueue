@@ -6,7 +6,6 @@ const createOffice = async (req, res) => {
 
     try {
         const {
-            _id,
             office_name,
             office_type,
             address,
@@ -26,7 +25,6 @@ const createOffice = async (req, res) => {
         }
 
         const office = await OfficeModel.create({
-            _id,
             office_name,
             office_type,
             address,

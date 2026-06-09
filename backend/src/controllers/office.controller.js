@@ -1,6 +1,57 @@
 const officemodel = require('../models/office.model');
 const slotmodel = require('../models/slot.model');
 
+
+const createOffice = async (req, res) => {
+
+    try {
+        const {
+            _id,
+            office_name,
+            office_type,
+            address,
+            location,
+            hours,
+            open_days,
+            total_counters,
+            is_active,
+        } = req.body;
+
+        const existingOffice = await OfficeModel.findById(_id);
+        if (existingOffice) {
+            return res.status(409).json({
+                success: false,
+                message: "Office already exists",
+            });
+        }
+
+        const office = await OfficeModel.create({
+            _id,
+            office_name,
+            office_type,
+            address,
+            location,
+            hours,
+            open_days,
+            total_counters,
+            is_active,
+        });
+
+        return res.status(201).json({
+            success: true,
+            message: "Office created successfully",
+            data: office,
+        });
+    } 
+    catch (error) {
+        console.error('ISE > Create Office Failed : ', error);
+        res.status(500).json( {
+            success: false,
+            message: 'ISE > Internal Server Error' + error.message 
+        });
+    }
+}
+
 /**
  * @name getAllOfficesController
  * @description Controller to fetch all offices
@@ -73,6 +124,7 @@ async function getOfficeSlotsController(req, res){
 }
 
 module.exports = {
+    createOffice,
     getAllOfficesController,
     getOfficeByIdController,
     getOfficeSlotsController

@@ -9,6 +9,8 @@ const jwt = require('jsonwebtoken')
 
 async function registerUserController(req, res) {
 
+    try {
+
         const {
             name,
             phone,
@@ -23,10 +25,10 @@ async function registerUserController(req, res) {
         } = req.body;
 
         // Required fields
-        if (!email || !phone) {
+        if (!name || !email || !phone) {
             return res.status(400).json({
                 success: false,
-                message: "Email and phone are required",
+                message: "Name, email and phone are required",
             });
         }
 
@@ -67,6 +69,14 @@ async function registerUserController(req, res) {
             message: "User registered successfully",
             data: user,
         });
+    }
+    catch (error) {
+        console.error('ISE > User Registration Failed : ', error);
+        res.status(500).json({
+            success: false,
+            message: 'ISE > Internal Server Error' + error.message
+        });
+    }
    
 };
 
@@ -78,29 +88,56 @@ async function registerUserController(req, res) {
 
 async function loginUserController(req, res) {
 
-    const { email, phone } = req.body
+    try {
 
-    const user = await userModel.findOne({ $or: [{ email }, { phone }] })
+        const { email, phone , password } = req.body
 
-    if (!user) {
-        return res.status(400).json({
-            message: "inavalid email or phone"
-        })
+        if ( !email || !phone ) {
+            return res.status(400).json({
+                success: false,
+                message: "Email or phone are required"
+            })
+        }
+
+        if ( !password ) {
+            return res.status(400).json({
+                success: false,
+                message: "Password is required"
+            })
+        }
+
+        const user = await userModel.findOne({ $or: [{ email }, { phone }] })
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email or phone"
+            })
+        }
+
+        const token = jwt.sign({ id: user._id, name: user.name },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        )
+                
+        res.cookie("token", token)
+
+        res.status(200).json({
+            success: true,
+            message: "User logged in successfully",
+            data: user,
+        });
+    
     }
-
-    token = jwt.sign({ id: user._id, name: user.name },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
-            
-    res.cookie("token", token)
-
-    res.status(200).json({
-        success: true,
-        message: "User logged in successfully",
-        data: user,
-    });
+    catch ( error ) {
+        console.error('ISE > User Login Failed : ', error);
+        res.status(500).json({
+            success: false,
+            message: 'ISE > Internal Server Error' + error.message
+        });
+    }
 }
+    
 
 
 /**
@@ -108,15 +145,26 @@ async function loginUserController(req, res) {
  * @description clear token from user cookie and add the token in blacklist
  * @access Public
  */
-async function logoutUserController(req, res){
+async function logoutUserController(req, res) {
 
-    const token = req.cookies.token
+    try {
 
-    res.clearCookie("token")
+        const token = req.cookies.token
+        res.clearCookie("token")
 
-    res.status(200).json({
-        message:"user loged out successfully"
-    })
+        res.status(200).json({
+            success: true,
+            message:"user logged out successfully"
+        })
+    }
+    catch (error) {
+        console.error('ISE > Logout Failed : ', error);
+        res.status(500).json( {
+            success: false,
+            message: 'ISE > Internal Server Error' + error.message
+        });
+    }
+
 }
 
 

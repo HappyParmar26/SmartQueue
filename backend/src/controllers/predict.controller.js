@@ -1,12 +1,6 @@
+const axios = require('axios');
+const Office = require('../models/office.model');
 
-
-    // office_id: str
-    // office_type: str
-    // department: str
-    // city: str
-    // datetime: datetime
-    // open_hour: int
-    // close_hour: int
 
 const predict = async (req, res) => {
 

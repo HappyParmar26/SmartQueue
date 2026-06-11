@@ -8,14 +8,14 @@ const predict = async (req, res) => {
 
         const { office_id , department, datetime } = req.body; 
         
-        if ( !office_id || !datetime || open_hour === undefined || close_hour === undefined ) {
+        if ( !office_id || !department || !datetime ) {
             return res.status(400).json( {
                 success: false,
-                message: 'Missing required parameters'
+                message: 'office_id, department, and datetime are required'
             });
         }
 
-        const office = await Office.findOne({ office_id });
+        const office = await Office.findById(office_id);
         if (!office) {
             return res.status(404).json( {
                 success: false,
@@ -71,14 +71,14 @@ const predictDay = async (req, res) => {
 
         const { office_id , department, datetime } = req.body; 
         
-        if ( !office_id || !datetime || open_hour === undefined || close_hour === undefined ) {
+        if ( !office_id || !department || !datetime ) {
             return res.status(400).json( {
                 success: false,
-                message: 'Missing required parameters'
+                message: 'office_id, department, and datetime are required'
             });
         }
 
-        const office = await Office.findOne({ office_id });
+        const office = await Office.findById(office_id);
         if (!office) {
             return res.status(404).json( {
                 success: false,

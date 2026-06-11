@@ -1,8 +1,8 @@
 const express = require('express');
-const departmentController = require('../controllers/department.controller');
+const departmentController = require('../controllers/departments.controller');
 
 const departmentRouter = express.Router();
 
-departmentRouter.post("/", departmentController.crateDepartment);
+departmentRouter.post("/", departmentController.createDepartment);
 
 module.exports = departmentRouter;

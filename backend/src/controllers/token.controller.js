@@ -1,10 +1,14 @@
 const TokenModel = require("../models/token.model");
-const citizenModel = require("../models/user.model");
-
+const {
+    createTokenRecord,
+    getCitizenTokenLiveState,
+    getOfficeQueueSnapshot,
+    tokenToObject,
+} = require("../services/queue.service");
+const { emitTokenUpdate, emitOfficeQueueUpdate } = require("../realtime/socket");
 
 async function createToken(req, res) {
     try {
-
         const citizen_id = req.user.id;
 
         const {
@@ -17,7 +21,9 @@ async function createToken(req, res) {
             slot_time,
             is_priority = false,
             is_walkin = false,
-            priority_reason = null
+            priority_reason = null,
+            counter_id = null,
+            counter_number = null,
         } = req.body;
 
         if (
@@ -31,176 +37,150 @@ async function createToken(req, res) {
         ) {
             return res.status(400).json({
                 success: false,
-                message: "All required fields must be provided"
+                message: "All required fields must be provided",
             });
         }
 
-        // Position in queue
-        const position =
-            (await TokenModel.countDocuments({
-                office_id,
-                "booking.date": date,
-                status: {
-                    $in: ["waiting", "called", "serving"]
-                }
-            })) + 1;
-
-        // Generate token number
-        const lastToken = await TokenModel.findOne({
-            office_id,
-            "booking.date": date
-        })
-            .sort({ created_at: -1 });
-
-        let nextNumber = 1;
-
-        if (lastToken) {
-            nextNumber =
-                parseInt(lastToken.token_number.split("-")[1]) + 1;
-        }
-
-        const token_number = `T-${nextNumber}`;
-
-        const token = await TokenModel.create({
-            token_number,
-            office_id,
+        const token = await createTokenRecord({
             citizen_id,
+            office_id,
+            service_id,
+            service_name,
+            slot_id,
+            date,
+            hour,
+            slot_time,
+            counter_id,
+            counter_number,
+            is_priority,
+            is_walkin,
+            priority_reason,
+            queue_source: is_walkin ? "offline" : "online",
+            note: "Token booked",
+        });
 
-            service: {
-                service_id,
-                service_name
-            },
+        emitTokenUpdate(token, {
+            officeId: office_id,
+            event: "token.created",
+        });
 
-            booking: {
-                date,
-                hour,
-                slot_time,
-                slot_id,
-                position
-            },
-
-            priority: {
-                is_priority,
-                is_walkin,
-                priority_reason
-            },
-
-            timestamps: {
-                booked_at: new Date()
-            },
-
-            history: [
-                {
-                    status: "waiting",
-                    changed_at: new Date(),
-                    note: "Token booked"
-                }
-            ]
+        emitOfficeQueueUpdate(office_id, {
+            date,
+            serviceId: service_id,
         });
 
         return res.status(201).json({
             success: true,
             message: "Token booked successfully",
-            data: token
+            data: token,
         });
-
     } catch (error) {
-
         console.error("Create Token Error:", error);
-
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
     }
 }
 
 async function getCitizenTokens(req, res) {
     try {
-
         const citizen_id = req.user.id;
 
-        const tokens = await TokenModel.find({ citizen_id })
-            .sort({ created_at: -1 });
+        const tokens = await TokenModel.find({ citizen_id }).sort({ created_at: -1 }).lean();
 
         return res.status(200).json({
             success: true,
             count: tokens.length,
-            data: tokens
+            data: tokens,
         });
-
     } catch (error) {
-
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
-
     }
 }
 
-async function getCitizenTokenById (req, res) {
+async function getCitizenTokenById(req, res) {
     try {
-
         const citizen_id = req.user.id;
         const { id } = req.params;
 
         const token = await TokenModel.findOne({
             _id: id,
-            citizen_id
-        });
+            citizen_id,
+        }).lean();
 
         if (!token) {
             return res.status(404).json({
                 success: false,
-                message: "Token not found"
+                message: "Token not found",
             });
         }
 
         return res.status(200).json({
             success: true,
-            data: token
+            data: token,
         });
-
     } catch (error) {
-
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
-
     }
 }
 
 async function getLiveToken(req, res) {
     try {
-        // will implement it later after the service creatron 
-        
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({
+                success: false,
+                message: "Token id is required",
+            });
+        }
+
+        const liveState = await getCitizenTokenLiveState({
+            tokenId: id,
+            citizenId: req.user?.id || null,
+        });
+
+        if (!liveState) {
+            return res.status(404).json({
+                success: false,
+                message: "Token not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: liveState,
+        });
     } catch (error) {
         console.error("Get Live Token Error:", error);
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
-
     }
 }
 
 async function cancelToken(req, res) {
     try {
-
         const citizen_id = req.user.id;
         const { id } = req.params;
 
         const token = await TokenModel.findOne({
             _id: id,
-            citizen_id
+            citizen_id,
         });
 
         if (!token) {
             return res.status(404).json({
                 success: false,
-                message: "Token not found"
+                message: "Token not found",
             });
         }
 
@@ -211,43 +191,53 @@ async function cancelToken(req, res) {
         ) {
             return res.status(400).json({
                 success: false,
-                message: `Token is already ${token.status}`
+                message: `Token is already ${token.status}`,
             });
         }
 
+        const now = new Date();
         token.status = "cancelled";
         token.cancel_reason = "Cancelled by citizen";
-        token.timestamps.cancelled_at = new Date();
-
+        token.timestamps = token.timestamps || {};
+        token.timestamps.cancelled_at = now;
+        token.history = token.history || [];
         token.history.push({
             status: "cancelled",
-            changed_at: new Date(),
-            note: "Cancelled by citizen"
+            changed_at: now,
+            changed_by: citizen_id,
+            note: "Cancelled by citizen",
         });
 
         await token.save();
 
+        emitTokenUpdate(token, {
+            officeId: token.office_id,
+            event: "token.cancelled",
+        });
+
+        emitOfficeQueueUpdate(token.office_id, {
+            date: token.booking?.date,
+            serviceId: token.service?.service_id || null,
+        });
+
         return res.status(200).json({
             success: true,
             message: "Token cancelled successfully",
-            data: token
+            data: tokenToObject(token),
         });
-
     } catch (error) {
         console.error("Cancel Token Error:", error);
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
-
     }
 }
-
 
 module.exports = {
     createToken,
     getCitizenTokens,
     getCitizenTokenById,
-    getLiveToken ,
-    cancelToken
+    getLiveToken,
+    cancelToken,
 };

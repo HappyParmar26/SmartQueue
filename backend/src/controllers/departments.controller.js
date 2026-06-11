@@ -1,5 +1,5 @@
-const DepartmentModel = require("../models/Department");
-const OfficeModel = require("../models/Office");
+const DepartmentModel = require("../models/department.model");
+const OfficeModel = require("../models/office.model");
 
 const createDepartment = async (req, res) => {
     try {

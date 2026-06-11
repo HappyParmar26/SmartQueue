@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const tokenBlacklistModel = require('../models/blacklist.model');
+const UserModel = require('../models/user.model');
 
 
 async function authUser(req, res, next) {
@@ -11,7 +11,14 @@ async function authUser(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        const user = await UserModel.findById(decoded.id).lean();
+
+        req.user = {
+            ...decoded,
+            role: user?.role || decoded.role || 'user',
+            office_id: user?.office_id || decoded.office_id || null,
+        };
+
         return next();
     } catch (err) {
         return res.status(401).json({ message: 'Invalid Token' });

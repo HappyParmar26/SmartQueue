@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const bcryptjs = require('bcryptjs');
 
 /**
  * @name registerUserController
@@ -15,6 +16,7 @@ async function registerUserController(req, res) {
             name,
             phone,
             email,
+            password,
             role,
             office_id,
             dob,
@@ -25,10 +27,18 @@ async function registerUserController(req, res) {
         } = req.body;
 
         // Required fields
-        if (!name || !email || !phone) {
+        if (!name || !email || !phone || !password) {
             return res.status(400).json({
                 success: false,
-                message: "Name, email and phone are required",
+                message: "Name, email, phone, and password are required",
+            });
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: "Password must be at least 6 characters long",
             });
         }
 
@@ -42,11 +52,15 @@ async function registerUserController(req, res) {
             });
         }
 
+        // Hash password
+        const hashedPassword = await bcryptjs.hash(password, 10);
+
         // Create user
         const user = await userModel.create({
             name,
             phone,
             email,
+            password: hashedPassword,
             role,
             office_id,
             dob,
@@ -57,17 +71,34 @@ async function registerUserController(req, res) {
         });
 
 
-        const token = jwt.sign({id: user._id, name:user.name},
+        const token = jwt.sign(
+            {
+                id: user._id,
+                name: user.name,
+                role: user.role,
+                office_id: user.office_id || null,
+            },
             process.env.JWT_SECRET,
             {expiresIn: "1d"}
         )
             
-        res.cookie("token", token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 24 * 60 * 60 * 1000,
+        })
 
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: user,
+            data: {
+                id: user._id,
+                name: user.name,
+                phone: user.phone,
+                email: user.email,
+                role: user.role,
+            },
         });
     }
     catch (error) {
@@ -106,7 +137,7 @@ async function loginUserController(req, res) {
             })
         }
 
-        const user = await userModel.findOne({ $or: [{ email }, { phone }] })
+        const user = await userModel.findOne({ $or: [{ email }, { phone }] }).select('+password')
 
         if (!user) {
             return res.status(400).json({
@@ -115,17 +146,44 @@ async function loginUserController(req, res) {
             })
         }
 
-        const token = jwt.sign({ id: user._id, name: user.name },
+        // Verify password
+        const isPasswordValid = await bcryptjs.compare(password, user.password)
+        if (!isPasswordValid) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid password"
+            })
+        }
+
+        const token = jwt.sign(
+            {
+                id: user._id,
+                name: user.name,
+                role: user.role,
+                office_id: user.office_id || null,
+            },
             process.env.JWT_SECRET,
             { expiresIn: "1d" }
         )
                 
-        res.cookie("token", token)
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 24 * 60 * 60 * 1000,
+        })
 
         res.status(200).json({
             success: true,
             message: "User logged in successfully",
-            data: user,
+            data: {
+                id: user._id,
+                name: user.name,
+                phone: user.phone,
+                email: user.email,
+                role: user.role,
+                office_id: user.office_id || null,
+            },
         });
     
     }

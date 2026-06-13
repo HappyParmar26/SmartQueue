@@ -74,11 +74,6 @@ const HoursSchema = new Schema(
 
 const OfficeSchema = new Schema(
     {
-        _id: {
-            type: String, // e.g. "RTO_Ahmedabad_Central"
-            required: true,
-            trim: true,
-        },
         office_name: { 
             type: String, 
             required: true, 

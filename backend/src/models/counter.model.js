@@ -57,10 +57,10 @@ const counterSchema = new mongoose.Schema(
 );
 
 // Ensure counter numbers are unique within an office
-//counterSchema.index(
-//    { office_id: 1, counter_number: 1 },
-//    { unique: true }
-//);
+counterSchema.index(
+    { office_id: 1, counter_number: 1 },
+    { unique: true }
+);
 
 const CounterModel = mongoose.model("Counter", counterSchema);
 

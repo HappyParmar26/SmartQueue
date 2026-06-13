@@ -66,6 +66,24 @@ const TimestampsSchema = new Schema(
         called_at: { type: Date, default: null },
         served_at: { type: Date, default: null },
         cancelled_at: { type: Date, default: null },
+        no_show_at: { type: Date, default: null },
+        rescheduled_at: { type: Date, default: null },
+        transferred_at: { type: Date, default: null },
+    },
+    { _id: false }
+);
+
+const QueueMetaSchema = new Schema(
+    {
+        source: {
+            type: String,
+            enum: ["online", "offline"],
+            default: "online",
+        },
+        hold_until: { type: Date, default: null },
+        returned_from_skip_at: { type: Date, default: null },
+        skipped_count: { type: Number, default: 0, min: 0 },
+        last_ranking_refresh_at: { type: Date, default: null },
     },
     { _id: false }
 );
@@ -77,7 +95,7 @@ const HistoryEntrySchema = new Schema(
         status: {
             type: String,
             required: true,
-            enum: ["waiting", "called", "serving", "served", "cancelled", "no_show", "rescheduled"],
+            enum: ["waiting", "called", "served", "cancelled", "no_show", "rescheduled"],
         },
         changed_at: { type: Date, required: true, default: () => new Date() },
         changed_by: { type: Schema.Types.ObjectId, ref: "Staff", default: null },
@@ -122,7 +140,7 @@ const TokenSchema = new Schema(
         status: {
             type: String,
             required: true,
-            enum: ["waiting", "called", "serving", "served", "cancelled", "no_show", "rescheduled"],
+            enum: ["waiting", "called", "served", "cancelled", "no_show", "rescheduled"],
             default: "waiting",
         },
 
@@ -133,6 +151,8 @@ const TokenSchema = new Schema(
         timestamps: { type: TimestampsSchema, required: true },
 
         cancel_reason: { type: String, default: null, trim: true },
+
+        queue: { type: QueueMetaSchema, default: () => ({}) },
 
         history: { type: [HistoryEntrySchema], default: [] },
     },
@@ -159,6 +179,8 @@ TokenSchema.index({ citizen_id: 1, "booking.date": 1 });               // citize
 TokenSchema.index({ "booking.slot_id": 1 });                           // slot-level lookups
 TokenSchema.index({ "booking.date": 1, "booking.hour": 1, status: 1 }); // hourly load reports
 TokenSchema.index({ "priority.is_priority": 1, status: 1 });           // priority queue filter
+TokenSchema.index({ office_id: 1, "queue.hold_until": 1 });            // skipped token re-entry
+TokenSchema.index({ office_id: 1, "queue.returned_from_skip_at": 1 }); // re-queued tokens
 
 const TokenModel = model("Token", TokenSchema);
 

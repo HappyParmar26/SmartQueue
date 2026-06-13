@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const serviceSchema = new mongoose.Schema(
+const departmentSchema = new mongoose.Schema(
     {
         office_id: {
             type: mongoose.Schema.Types.ObjectId,
@@ -9,7 +9,7 @@ const serviceSchema = new mongoose.Schema(
             index: true,
         },
 
-        service_name: {
+        department_name: {
             type: String,
             required: true,
             trim: true,
@@ -18,12 +18,6 @@ const serviceSchema = new mongoose.Schema(
         description: {
             type: String,
             trim: true,
-        },
-
-        avg_time_mins: {
-            type: Number,
-            required: true,
-            min: 1,
         },
 
         is_active: {
@@ -39,12 +33,15 @@ const serviceSchema = new mongoose.Schema(
     }
 );
 
-// Optional: Prevent duplicate services in the same office
-//serviceSchema.index(
-//    { office_id: 1, service_name: 1 },
-//    { unique: true }
-//);
+// Prevent duplicate departments in the same office
+departmentSchema.index(
+    { office_id: 1, department_name: 1 },
+    { unique: true }
+);
 
-const ServiceModel = mongoose.model("Service", serviceSchema);
+const DepartmentModel = mongoose.model(
+    "Department",
+    departmentSchema
+);
 
-module.exports = ServiceModel;
+module.exports = DepartmentModel;

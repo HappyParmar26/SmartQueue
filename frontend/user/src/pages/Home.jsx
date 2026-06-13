@@ -414,36 +414,32 @@
 //         </div>
 //       </section>
 
-
 //     </div>
 //   );
 // }
 
-
-
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, Navigate } from "react-router-dom";
 import { clsx } from "clsx";
+import AuthDialog from "../components/auth/AuthDialog";
 
 export default function Home() {
-    return (
-        <div className="min-h-screen flex flex-col font-sans bg-gray-50 text-gray-900 ">
-            
-            <main className="flex-grow">
-                <HeroSection />
-                <StatsSection />
-                <FeaturesSection />
-                <HowItWorksSection />
-                <CtaSection />
-            </main>
-         
-        </div>
-    );
+  const [authOpen, setAuthOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-gray-50 text-gray-900 ">
+      <main className="flex-grow">
+        <HeroSection />
+        <StatsSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        {/* <CtaSection /> */}
+      </main>
+    </div>
+  );
 }
 
 // --- Sub-components (Can be extracted to src/components/ui or layout later) ---
-
-
 
 function HeroSection() {
   return (
@@ -451,7 +447,6 @@ function HeroSection() {
       <div className="container mx-auto px-4">
         {/* CSS Grid: 1 column on mobile, 2 columns on large screens */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          
           {/* --- LEFT COLUMN: Text Content --- */}
           {/* Centered on mobile, left-aligned on desktop */}
           <div className="max-w-2xl text-center lg:text-left mx-auto lg:mx-0">
@@ -459,21 +454,26 @@ function HeroSection() {
               <span className="flex h-2 w-2 rounded-full bg-blue-600"></span>
               Live in 50+ Government Centers
             </div>
-            
+
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900 mb-6 leading-tight">
               Skip the Queue. <br className="hidden lg:block" />
               <span className="text-blue-600">Save Hours.</span>
             </h1>
-            
+
             <p className="text-lg md:text-xl text-gray-600 mb-10 leading-relaxed">
-              AI-powered queue management for government offices, hospitals, municipal corporations, and RTOs. Book your token digitally and arrive exactly when you're needed.
+              AI-powered queue management for government offices, hospitals,
+              municipal corporations, and RTOs. Book your token digitally and
+              arrive exactly when you're needed.
             </p>
-            
+
             {/* Flex container for buttons: centered on mobile, left-aligned on desktop */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <button className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg">
+              <Link
+                to="/book-token"
+                className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+              >
                 Book a Token Now
-              </button>
+              </Link>
               <button className="w-full sm:w-auto px-8 py-3.5 text-base font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition-all">
                 Learn More
               </button>
@@ -484,14 +484,13 @@ function HeroSection() {
           <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
             {/* Optional decorative background offset to make the image pop */}
             <div className="absolute -inset-4 bg-blue-50 rounded-3xl transform rotate-3 -z-10 hidden sm:block"></div>
-            
-            <img 
-              src="https://media.istockphoto.com/id/177129252/photo/waiting-in-line.jpg" 
-              alt="People waiting in a long queue" 
+
+            <img
+              src="https://media.istockphoto.com/id/177129252/photo/waiting-in-line.jpg"
+              alt="People waiting in a long queue"
               className="relative w-full h-auto object-cover rounded-2xl shadow-2xl aspect-[4/3] z-10"
             />
           </div>
-
         </div>
       </div>
     </section>
@@ -499,134 +498,213 @@ function HeroSection() {
 }
 
 function StatsSection() {
-    const stats = [
-        { label: "Citizens Served", value: "2M+" },
-        { label: "Average Time Saved", value: "45 mins" },
-        { label: "Active Centers", value: "120+" },
-        { label: "Accuracy Rate", value: "98%" },
-    ];
+  const stats = [
+    { label: "Citizens Served", value: "2M+" },
+    { label: "Average Time Saved", value: "45 mins" },
+    { label: "Active Centers", value: "120+" },
+    { label: "Accuracy Rate", value: "98%" },
+  ];
 
-    return (
-        <section className="py-12 text-gray-100">
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                    {stats.map((stat, idx) => (
-                        <div key={idx} className="flex flex-col gap-1 border rounded-2xl p-6 bg-[#222424] shadow-sm hover:shadow-md transition">
-                            <span className="text-4xl font-bold tracking-tight">{stat.value}</span>
-                            <span className="text-blue-100 text-sm font-medium">{stat.label}</span>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <section className="py-12 text-gray-100">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {stats.map((stat, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col gap-1 border rounded-2xl p-6 bg-[#222424] shadow-sm hover:shadow-md transition"
+            >
+              <span className="text-4xl font-bold tracking-tight">
+                {stat.value}
+              </span>
+              <span className="text-blue-100 text-sm font-medium">
+                {stat.label}
+              </span>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function FeaturesSection() {
-    const features = [
-        {
-            title: "Digital Token Booking",
-            description: "Book your spot in line from the comfort of your home. No more standing in the sun for hours.",
-            icon: (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                </svg>
-            ),
-        },
-        {
-            title: "Live Queue Status",
-            description: "Monitor the line in real-time. Know exactly which token is currently being served at your selected counter.",
-            icon: (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            ),
-        },
-        {
-            title: "AI Wait-Time Prediction",
-            description: "Our AI analyzes current office speeds to predict exactly when your turn will come. Leave home just in time.",
-            icon: (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            ),
-        },
-    ];
+  const features = [
+    {
+      title: "Digital Token Booking",
+      description:
+        "Book your spot in line from the comfort of your home. No more standing in the sun for hours.",
+      icon: (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "Live Queue Status",
+      description:
+        "Monitor the line in real-time. Know exactly which token is currently being served at your selected counter.",
+      icon: (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+          />
+        </svg>
+      ),
+    },
+    {
+      title: "AI Wait-Time Prediction",
+      description:
+        "Our AI analyzes current office speeds to predict exactly when your turn will come. Leave home just in time.",
+      icon: (
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
+        </svg>
+      ),
+    },
+  ];
 
-    return (
-        <section id="features" className="py-20 bg-white">
-            <div className="container mx-auto px-4 max-w-6xl">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Everything you need to save time</h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto">SmartQueue AI brings transparency and predictability to public services, putting you in control of your schedule.</p>
-                </div>
-                <div className="grid md:grid-cols-3 gap-10">
-                    {features.map((feature, idx) => (
-                        <div key={idx} className="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-lg transition-shadow">
-                            <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
-                                {feature.icon}
-                            </div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
-                            <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <section id="features" className="py-20 bg-white">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Everything you need to save time
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            SmartQueue AI brings transparency and predictability to public
+            services, putting you in control of your schedule.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-10">
+          {features.map((feature, idx) => (
+            <div
+              key={idx}
+              className="p-8 rounded-2xl bg-gray-50 border border-gray-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {feature.description}
+              </p>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function HowItWorksSection() {
-    const steps = [
-        { num: "01", title: "Select Service", desc: "Choose your city and the specific government office or hospital." },
-        { num: "02", title: "Book Token", desc: "Get a digital token instantly on your phone via SMS or the portal." },
-        { num: "03", title: "Track Live", desc: "Watch the queue progress and get AI alerts on your expected turn time." },
-        { num: "04", title: "Arrive on Time", desc: "Walk straight to the counter without sitting in a crowded waiting room." },
-    ];
+  const steps = [
+    {
+      num: "01",
+      title: "Select Service",
+      desc: "Choose your city and the specific government office or hospital.",
+    },
+    {
+      num: "02",
+      title: "Book Token",
+      desc: "Get a digital token instantly on your phone via SMS or the portal.",
+    },
+    {
+      num: "03",
+      title: "Track Live",
+      desc: "Watch the queue progress and get AI alerts on your expected turn time.",
+    },
+    {
+      num: "04",
+      title: "Arrive on Time",
+      desc: "Walk straight to the counter without sitting in a crowded waiting room.",
+    },
+  ];
 
-    return (
-        <section id="how-it-works" className="py-20 bg-gray-50 border-t border-gray-200">
-            <div className="container mx-auto px-4 max-w-6xl">
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
-                    <p className="text-gray-600">Four simple steps to a hassle-free experience.</p>
-                </div>
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {steps.map((step, idx) => (
-                        <div key={idx} className="relative flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-white border-2 border-blue-600 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold mb-4 z-10 shadow-sm">
-                                {step.num}
-                            </div>
-                            {/* Connector Line (hidden on mobile) */}
-                            {idx !== steps.length - 1 && (
-                                <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-blue-200"></div>
-                            )}
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
-                            <p className="text-gray-600 text-sm px-4">{step.desc}</p>
-                        </div>
-                    ))}
-                </div>
+  return (
+    <section
+      id="how-it-works"
+      className="py-20 bg-gray-50 border-t border-gray-200"
+    >
+      <div className="container mx-auto px-4 max-w-6xl">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            How It Works
+          </h2>
+          <p className="text-gray-600">
+            Four simple steps to a hassle-free experience.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, idx) => (
+            <div
+              key={idx}
+              className="relative flex flex-col items-center text-center"
+            >
+              <div className="w-16 h-16 bg-white border-2 border-blue-600 text-blue-600 rounded-full flex items-center justify-center text-xl font-bold mb-4 z-10 shadow-sm">
+                {step.num}
+              </div>
+              {/* Connector Line (hidden on mobile) */}
+              {idx !== steps.length - 1 && (
+                <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-blue-200"></div>
+              )}
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {step.title}
+              </h3>
+              <p className="text-gray-600 text-sm px-4">{step.desc}</p>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function CtaSection() {
-    return (
-        <section className="py-20 bg-white">
-            <div className="container mx-auto px-4 max-w-4xl text-center bg-gray-900 rounded-3xl p-10 md:p-16 shadow-xl">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                    Ready to reclaim your day?
-                </h2>
-                <p className="text-gray-300 mb-8 text-lg max-w-xl mx-auto">
-                    Create an account in 30 seconds and book your first digital token for the RTO, hospital, or municipal office.
-                </p>
-                <button className="px-8 py-4 text-base font-bold text-gray-900 bg-white rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
-                    Create Citizen Account
-                </button>
-            </div>
-        </section>
-    );
+  return (
+    <section className="py-20 bg-white">
+      <div className="container mx-auto px-4 max-w-4xl text-center bg-gray-900 rounded-3xl p-10 md:p-16 shadow-xl">
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          Ready to reclaim your day?
+        </h2>
+        <p className="text-gray-300 mb-8 text-lg max-w-xl mx-auto">
+          Create an account in 30 seconds and book your first digital token for
+          the RTO, hospital, or municipal office.
+        </p>
+        <button className="px-8 py-4 text-base font-bold text-gray-900 bg-white rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
+          Create Citizen Account
+        </button>
+      </div>
+    </section>
+  );
 }
-
-

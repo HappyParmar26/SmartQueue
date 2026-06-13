@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+body{
+    background-color: #c8d2dd;
+}
+
+/* to turn off sidewise stretching (Horizontal) */
+/* html,
+body,
+#root {
+  width: 100%;
+  overflow-x: hidden;
+} */
